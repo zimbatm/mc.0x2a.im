@@ -1,24 +1,35 @@
 #!/bin/bash
 cd `dirname $0`
 
+# Remove old stop conditions
 rm -f server.stop
 
-while ! [ -f server.stop ]; do
-  if ! [ -p server.ctl ]; then
-    rm -f server.ctl
-    mkfifo server.ctl
+# Make sure the fifo exists
+if ! [ -p server.ctl ]; then
+  rm -f server.ctl
+  mkfifo server.ctl
+fi
+
+# Update upstream code
+# TODO: restart run.sh on update
+git pull
+
+# Run the server
+mkdir -p server
+pushd server >/dev/null
+  java -Xincgc -Xmx1G -jar ../craftbukkit-1.0.0-SNAPSHOT.jar nogui <> ../server.ctl &>/dev/null
+
+  if [ "$?" != 0 ]; then
+    echo "Fail !" `date` > ../fail.log
   fi
+popd >/dev/null
 
-  git pull
+sleep 1
 
-  mkdir -p server
-  pushd server >/dev/null
-    java -Xincgc -Xmx1G -jar ../craftbukkit-1.0.0-SNAPSHOT.jar nogui <> ../server.ctl &>/dev/null
-
-    if [ "$?" != 0 ]; then
-      echo "Fail !" `date` > ../fail.log
-    fi
-  popd >/dev/null
-
-  sleep 1
-done
+# Restart ./run.sh
+# This allows updating the script himself via git
+if [ -f server.stop ]; then
+  rm server.stop
+else
+  exec ./run.sh
+fi
