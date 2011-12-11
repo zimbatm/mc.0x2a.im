@@ -1,0 +1,6 @@
+server/*.txt
+server/*.yml
+server/plugins/*
+server/server.log
+server/server.properties
+server/world*
