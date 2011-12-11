@@ -1,16 +1,18 @@
 #!/bin/sh
-
 cd `dirname $0`
 
-if ! [ -f server.ctl ]; then
-  mkfifo server.ctl
-fi
-
-while true; do
-  java -Xincgc -Xmx1G -jar craftbukkit-1.0.0-SNAPSHOT.jar nogui <> server.ctl &>/dev/null
-  if [ "$?" = 0 ]; then
-    exit
+while ! [ -f server.stop ]; do
+  if ! [ -p server.ctl ]; then
+    rm -f server.ctl
+    mkfifo server.ctl
   fi
-  echo "Fail !" `date` > fail.log
+
+  java -Xincgc -Xmx1G -jar craftbukkit-1.0.0-SNAPSHOT.jar nogui <> server.ctl &>/dev/null
+
+  if [ "$?" != 0 ]; then
+    echo "Fail !" `date` > fail.log
+  fi
+
   sleep 1
 done
+rm -f server.stop
