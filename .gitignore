@@ -1,8 +1,4 @@
-server/*.log
-server/*.log.*
-server/*.txt
-server/*.yml
-server/plugins/*
-server/server.properties
-server/server.ctl
-server/world*
+fail.log
+server.ctl
+server.stop
+server/*
