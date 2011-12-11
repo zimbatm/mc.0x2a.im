@@ -7,6 +7,8 @@ while ! [ -f server.stop ]; do
     mkfifo server.ctl
   fi
 
+  git pull
+
   java -Xincgc -Xmx1G -jar craftbukkit-1.0.0-SNAPSHOT.jar nogui <> server.ctl &>/dev/null
 
   if [ "$?" != 0 ]; then
