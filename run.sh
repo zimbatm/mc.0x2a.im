@@ -17,7 +17,7 @@ git pull
 # Run the server
 mkdir -p server
 pushd server >/dev/null
-  java -Xincgc -Xmx1G -jar ../craftbukkit-1.0.1-R1.jar nogui <> ../server.ctl &>/dev/null
+  java -Xincgc -Xmx1G -jar ../craftbukkit-1.1-R1.jar nogui <> ../server.ctl &>/dev/null
 
   if [ "$?" != 0 ]; then
     echo "Fail !" `date` > ../fail.log
